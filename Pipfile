@@ -11,6 +11,3 @@ autopep8 = "*"
 requests = "*"
 python-dotenv = "*"
 pyrss2gen = "*"
-
-[requires]
-python_version = "3.8"
