@@ -1,6 +1,7 @@
 import os
-import requests
+import sys
 import datetime
+import requests
 import PyRSS2Gen
 from datetime import timedelta, datetime as dt
 from dotenv import load_dotenv
@@ -43,12 +44,19 @@ def get_notifications(username, token):
 
 
 def main():
-    os.remove("./output/feed.xml")
-    GITHUB_USERNAME = os.getenv("GITHUB_USERNAME")
-    GITHUB_ACCESS_TOKEN = os.getenv("GITHUB_ACCESS_TOKEN")
-    response = get_notifications(GITHUB_USERNAME, GITHUB_ACCESS_TOKEN)
-    if (response.status_code == requests.codes.ok):
+    try:
+        os.remove("./output/feed.xml")
+    except OSError:
+        pass
+    try:
+        GITHUB_USERNAME = os.getenv("GITHUB_USERNAME")
+        GITHUB_ACCESS_TOKEN = os.getenv("GITHUB_ACCESS_TOKEN")
+        response = get_notifications(GITHUB_USERNAME, GITHUB_ACCESS_TOKEN)
+        response.raise_for_status()
         generate_rss(response.json())
+    except requests.exceptions.RequestException as e:
+        print(e)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
