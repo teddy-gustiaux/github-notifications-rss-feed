@@ -27,7 +27,7 @@ def generate_rss(notifications):
         title="GitHub Notifications Feed",
         link="https://github.com/notifications",
         description="The latest notifications from your GitHub account.",
-        lastBuildDate=notification["updated_at"],
+        lastBuildDate=datetime.datetime.now(),
         items=items)
     rss.write_xml(open("./output/feed.xml", "w"))
 
