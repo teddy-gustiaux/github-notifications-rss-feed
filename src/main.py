@@ -54,6 +54,7 @@ def main():
         response = get_notifications(GITHUB_USERNAME, GITHUB_ACCESS_TOKEN)
         response.raise_for_status()
         generate_rss(response.json())
+        print("RSS feed generated successfully!")
     except requests.exceptions.RequestException as e:
         print(e)
         sys.exit(1)
