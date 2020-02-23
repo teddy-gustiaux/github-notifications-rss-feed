@@ -91,6 +91,9 @@ server {
     auth_basic "Administrator's Area";
     auth_basic_user_file /path/to/my.htpasswd;
 
+    ssl_certificate /etc/letsencrypt/live/ghnrf.example.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/ghnrf.example.com/privkey.pem;
+
     root /path/to/output;
 
     location = /feed.xml {
