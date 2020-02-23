@@ -27,7 +27,7 @@ def generate_rss(notifications):
         title="GitHub Notifications Feed",
         link="https://github.com/notifications",
         description="The latest notifications from your GitHub account.",
-        lastBuildDate=notification["updated_at"],
+        lastBuildDate=datetime.datetime.now(),
         items=items)
     rss.write_xml(open("./output/feed.xml", "w"))
 
@@ -54,6 +54,7 @@ def main():
         response = get_notifications(GITHUB_USERNAME, GITHUB_ACCESS_TOKEN)
         response.raise_for_status()
         generate_rss(response.json())
+        print("RSS feed generated successfully!")
     except requests.exceptions.RequestException as e:
         print(e)
         sys.exit(1)
