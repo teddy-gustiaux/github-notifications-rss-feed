@@ -17,6 +17,7 @@ Prerequisites:
 
 - You will need to install Docker.
 - You will need a [GitHub personal access token](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line#creating-a-token) to be able to use their API.
+The `notifications` scope is the only one required.
 
 ## Development
 
@@ -45,18 +46,25 @@ In addition to the prerequisites of the previous, you will want to setup a cron 
 For instance, setting up `crontab` to run it every 20 minutes:
 
 ```
-*/20 * * * * cd /path/to/github-notifications-rss-feed && make run_production ENV_DIR=/path/to/.env OUTPUT_DIR=/path/to/output
+*/20 * * * * /path/to/my/script.sh
 ```
 
 For security reasons, use an user with minimum permissions.
-You can also set up the command in a separate shell script.
+It is recommended to set up the command in a separate shell script:
 
-- `ENV_DIR` must point to the folder containing your `.env` file.
-- `OUTPUT_DIR` must point to the folder you would like to contain the generated RSS file.
+```
+#!/bin/sh
+
+docker run \
+	--rm \
+	--name ghnrf \
+	--env-file /path/to/.env \
+	--mount type=bind,source=/path/to/output,target=/app/output \
+	teddygustiaux/github-notifications-rss-feed:latest
+```
 
 You will want to serve your RSS file to the web (see below).
-You can have the 
-I recommend to store your `.env` file in a different location with appropriate permissions as it contains personal credentials which should not be shared.
+It is recommended to store your `.env` file in a different location with appropriate permissions as it contains personal credentials which should not be shared.
 
 Finally, setup a custom sub-domain to access the generate RSS feed.
 I recommend [Let's Encrypt](https://letsencrypt.org/) to get a free TLS certificate.
@@ -117,7 +125,9 @@ In this case, once you have shared the appropriate folder in VirtualBox, the reg
 The `Makefile` allows to pass up to 3 different parameters indicating where to find the files and folders the application needs to run.
 All of them default to the current directory.
 
-- ENV_DIR
+- `ENV_DIR` must point to the folder containing your `.env` file.
+- `APP_DIR` must point to the folder that itself contains the application source file under a folder named `src`.
+- `OUTPUT_DIR` must point to the folder that itself will have a folder named `output` containing the generated RSS file.
 
 If all parameters are the same, which is very likely if you are in a development environment, then you can copy the value of the first parameter to the others!
 
